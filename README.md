@@ -31,11 +31,12 @@ npm install
 | POST    | /lighting/change    | Change the state of the bulbs using [this paylod][bulbState]
 
 
-**Bulb Payloads** #BulbPayloads
+**Bulb Payloads**
+-------------
 
 | parameter | values |
 |-----------|--------|
 | hue       | 
 
 
-[bulbState]: /#BulbPayloads "payloads for changing bulb state"
+[bulbState]: https://github.com/MrRacoon/lifx-rest#bulb-payload "payloads for changing bulb state"
