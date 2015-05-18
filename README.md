@@ -31,11 +31,11 @@ npm install
 | POST    | /lighting/change    | Change the state of the bulbs using [this paylod][bulbState]
 
 
-**Bulb Payloads**
+**Bulb Payloads** #BulbPayloads
 
 | parameter | values |
 |-----------|--------|
 | hue       | 
 
 
-[bulbState]: 
+[bulbState]: /#BulbPayloads "payloads for changing bulb state"
