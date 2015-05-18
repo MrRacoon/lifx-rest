@@ -49,9 +49,9 @@ var fadMap = {
     , fast  : '0x0200'
     , soon  : '0x0400'
     , walk  : '0x0800'
-    , mosey : '0x1000'
-    , slow  : '0x1000'
-    , creep : '0x2000'
+    , mosey : '0x1600'
+    , slow  : '0x3200'
+    , creep : '0x6400'
 };
 
 var defMap = {
@@ -63,20 +63,10 @@ var defMap = {
 }
 
 module.exports = {
-    hue            : hueMap
-
-    , saturation   : satMap
-    , sat          : satMap
-
-    , luminescence : lumMap
-    , lum          : lumMap
-
-    , whites       : whiMap
-    , whi          : whiMap
-
-    , fade         : fadMap
-    , fad          : fadMap
-
-    , defaults     : defMap
-    , def          : defMap
+    hue:   hueMap
+    , sat: satMap
+    , lum: lumMap
+    , whi: whiMap
+    , fad: fadMap
+    , def: defMap
 };
