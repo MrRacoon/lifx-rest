@@ -26,30 +26,28 @@ var satMap = {
 
 // Map of various luminesences by name
 var lumMap = {
-    on       : '0xffff'
-    , off    : '0x0000'
+    off      : '0x0000'
     , low    : '0x4000'
-    , med    : '0x8000'
     , medium : '0x8000'
-    , hi     : '0xc000'
     , high   : '0xc000'
+    , on     : '0xffff'
 };
 
 // Map of various whites by name
 var whiMap = {
-    none     : '0x0000'
+    off     : '0x0000'
     , low    : '0x4000'
-    , med    : '0x8000'
     , medium : '0x8000'
-    , hi     : '0xc000'
     , high   : '0xc000'
+    , on     : '0xffff'
 };
 
 // Map of various fades by name
 var fadMap = {
-    instant : '0x0000'
-    , now   : '0x0000'
+    now     : '0x0000'
     , quick : '0x0100'
+    , fast  : '0x0200'
+    , soon  : '0x0400'
     , walk  : '0x0800'
     , mosey : '0x1000'
     , slow  : '0x1000'
