@@ -21,7 +21,8 @@ npm install
 **EndPoints**
 
 
-|- Method |- route |- action -|
+| Method  | route  | action |
+|:--------|:-------|:------:|
 | GET     | /bulbs | Get the current state of bulbs that are currently seen by the server |
 
 
