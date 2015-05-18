@@ -1,24 +1,26 @@
-var restify = require('restify');
-var _       = require('lodash');
-var lifx    = require('lifx');
-var l       = lifx.init();
-var t       = require('./lighting');
-
-var server = restify.createServer({
+'use strict';
+var restify   = require('restify');
+var _         = require('lodash');
+var lifx      = require('lifx');
+var l         = lifx.init();
+var translate = require('./lighting');
+var server    = restify.createServer({
     name: 'homeControl',
     version: '0.1.0'
 });
 
+
 // Parse POST data so that we can doo cool tricks
-server.use(restify.bodyParser());
-// server.use(restify.queryParser());
+server.use(restify.bodyParser({ mapParams: true }));
+server.use(restify.queryParser());
 
 // TODO: See what's up with this
 server.use(restify.CORS());
 
-
-responses = {
-    lightsOn: 'Lights turning On'
+var responses = {
+    isOn    : 'Yup, It is in fact alive',
+    lightsOn: 'Lights turning On',
+    lightsOff: 'Lights turning off'
 };
 
 /**
@@ -29,9 +31,10 @@ server.get({
     path: '/lighting',
     version: ['0.1.0']
 }, function (req, res, next) {
-    res.send(200, 'yup its on');
+    res.send(200, responses.isOn);
     return next();
 });
+
 
 server.get({
     name: 'getBulbs',
@@ -42,111 +45,67 @@ server.get({
     return next();
 });
 
-server.get({
-    name: 'LightsOffAll',
-    path: '/lighting/off',
-    version: ['0.1.0'],
-}, function (req, res, next) {
-    l.lightsOff();
-    res.send(200);
-    return next();
-});
-
-server.get({
-    name: 'LightsOnAll',
-    path: '/lighting/on',
-    version: ['0.1.0'],
-}, function (req, res, next) {
-    l.lightsOn();
-    res.send(200, responses.lightsOn);
-    return next();
-});
 
 server.get({
     name: 'LightsOn',
-    path: '/lighting/:bulbs/on',
+    path: /\/lighting\/on(\/(\w+)?)?/,
     version: '0.1.0'
 }, function (req, res, next) {
-    if (req.params.bulbs === 'all') {
-        l.lightsOn();
-        res.send(200, responses.lightsOn);
-    }
-    else {
-        l.lightsOn(req.params.bulbs);
-        res.send(200, responses.lightsOn);
-    }
-    return next();
+    l.lightsOn(req.params[1]);
+    res.send(200, responses.lightsOn);
+    return next(false);
 });
 
 
+// TODO: Sticks
 server.get({
     name: 'LightsOff',
-    path: '/lighting/:bulbs/off',
+    path: /\/lighting\/off(\/(\w+)?)?/,
     version: '0.1.0'
 }, function (req, res, next) {
-    if (req.params.bulbs === 'all') {
-        l.lightsOff();
-        res.send(200, responses.lightsOff);
-    } else {
-        l.lightsOff(req.params.bulbs);
-        res.send(200, responses.lightsOff);
-    }
-    return next();
+    l.lightsOff(req.params[1]);
+    res.send(200, responses.lightsOff);
+    return next(false);
 });
 
-function changeBulbs (params) {
-    l.lightsColour(
-        !_.isUndefined(params.hue) ? params.hue : t.def.hue,
-        !_.isUndefined(params.sat) ? params.sat : t.def.sat,
-        !_.isUndefined(params.lum) ? params.lum : t.def.lum,
-        !_.isUndefined(params.whi) ? params.whi : t.def.whi,
-        !_.isUndefined(params.fad) ? params.fad : t.def.fad
-    );
+
+function parsePayload(obj) {
+    return _.transform(obj, function (ret, val, param) {
+        switch (true) {
+            case param === 'bulb':
+                ret.bulb = val;
+                break;
+            case typeof val === 'number':
+                ret[param] = Number(val & 0xffff);
+                break;
+            case typeof val === 'string':
+                ret[param] = (translate[param] || {})[val];
+                break;
+            default:
+                ret[param] = val;
+                break;
+        }
+    });
 }
 
 
 server.post({
     name: 'LightChange',
-    path: '/lighting/change',
+    path: /\/lighting\/change(\/(\w+)?)?/,
     version: '0.1.0'
 }, function (req, res, next) {
 
-    function convert(obj) {
-        return _.transform(obj, function (ret, val, key) {
+    var params  = typeof req.body === 'object' ? req.body : req.params;
+    var payload = parsePayload(params);
 
-            if (_.isUndefined(val)) {
-                return;
-            }
-            // Match the value to hex if you can, and then cast it to a number
-            var num = (val.match(/^(0x)[0-9A-Fa-f]*$/) || [''] )[0]
-
-            if (num) {
-                val = Number(num);
-            }
-
-            switch (typeof val) {
-                case 'number':
-                    console.log('got number: ' + val);
-                    // Make sure the number is not out of bounds
-                    ret[key] = val & 0xffff;
-                    break;
-                case 'string':
-                    console.log('got string: ' + val);
-                    // Lookup the keyword in the lookup table, else default
-                    ret[key] = t[key][val];
-                    break;
-                default:
-                    console.log('got nuthin\': ' + val);
-                    // anything else just gets left alone for now
-                    ret[key] = val;
-                break;
-            }
-        })
-    }
-
-    req.params = convert(req.params);
-
-    changeBulbs(req.params);
+    l.lightsColour(
+        payload.hue   || translate.def.hue,
+        payload.sat   || translate.def.sat,
+        payload.lum   || translate.def.lum,
+        payload.whi   || translate.def.whi,
+        payload.fad   || translate.def.fad,
+        payload.bulb  || translate.def.bulb // TODO: Doesn't seem to work...
+    );
 
     res.send(200, 'changing bulbs');
     return next();
