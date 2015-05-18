@@ -1,0 +1,17 @@
+{
+  "name": "lifx-rest",
+  "version": "0.1.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "author": "Erik Sutherland",
+  "license": "MITv3",
+  "dependencies": {
+    "restify": "~3.0.2",
+    "lodash": "~3.8.0",
+    "lifx": "~0.3.1"
+  }
+}
