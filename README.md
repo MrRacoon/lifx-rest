@@ -36,7 +36,7 @@ npm install
 
 | parameter | description                   | values |
 |-----------|-------------------------------|--------|
-| hue       | color of the bulb             | |
+| hue       | color of the bulb             | red, orange, gold, yellow, yelloGreen, greem, cyan, skyBlue, blue, lightBlack, black, pink, darkPink, hotPink, salmon |
 | sat       | whether to do color or whites | white, color                                     |
 | lum       | brightness of the bulb        | off, low, medium, high, on                       |
 | whi       | warmness, when using whites   | off, low, medium, high, on                       |
