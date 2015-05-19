@@ -3,7 +3,9 @@ var restify   = require('restify');
 var _         = require('lodash');
 var lifx      = require('lifx');
 var l         = lifx.init();
-var translate = require('./lighting');
+
+var translate = require('./translations');
+
 var server    = restify.createServer({
     name: 'homeControl',
     version: '0.1.0'
